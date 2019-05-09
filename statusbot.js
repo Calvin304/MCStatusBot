@@ -128,7 +128,7 @@ client.on('message', message => {
 	}
 	
 	if (command === "deleteserver") {
-		if (servers.guilds[guildindex].roleid !== null && !(message.member.roles.has(servers.guilds[guildindex].role.id))) {message.channel.send("Only people with " + servers.guilds[guildindex].role.name + " can use this command"); return;}
+		if (servers.guilds[guildindex].role.id !== null && !(message.member.roles.has(servers.guilds[guildindex].role.id))) {message.channel.send("Only people with " + servers.guilds[guildindex].role.name + " can use this command"); return;}
 		if (args.length < 1) {
 			message.channel.send("Usage: " + servers.guilds[guildindex].prefix + "deleteserver <name>");
 			return;
@@ -180,7 +180,7 @@ client.on('message', message => {
 	}
 	
 	if (command === "editserver") {
-		if (servers.guilds[guildindex].roleid !== null && !(message.member.roles.has(servers.guilds[guildindex].role.id))) {message.channel.send("Only people with " + servers.guilds[guildindex].role.name + " can use this command"); return;}
+		if (servers.guilds[guildindex].role.id !== null && !(message.member.roles.has(servers.guilds[guildindex].role.id))) {message.channel.send("Only people with " + servers.guilds[guildindex].role.name + " can use this command"); return;}
 		
 		if (args.length < 3) {
 			message.channel.send("Usage: " + servers.guilds[guildindex].prefix + "editserver <server> [name, ip, port, color, command(s)] <value1> <value2>");
