@@ -61,11 +61,8 @@ client.on('message', message => {
 	if (guildindex === -1) {
 		message.channel.send("something has gone wrong, restoring from default");
 		servers.guilds.push({"name": message.guild.name, "id": message.guild.id,"prefix":"/","role": {"id": null,"name": null},"mcservers": []});
-		let data = JSON.stringify(servers, null, 2);
-			fs.writeFile('servers.json', data, (err) => {  
-				if (err) throw err;
-				console.log('guild was missing from json and was restored');
-			});
+		fs.writeFile('servers.json', JSON.stringify(servers, null, 2));
+		console.log('guild was missing from json and was restored');
 	}
 
 	if (message.isMentioned(client.user) || message.content === servers.guilds[guildindex].prefix + "help") {
