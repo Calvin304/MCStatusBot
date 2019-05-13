@@ -6,7 +6,7 @@ const { Client, RichEmbed } = require('discord.js');
 var spawn = require("child_process").spawn;
 const fs = require('fs');
 
-let rawdata = fs.readFileSync('servers.json');  
+let rawdata = fs.readFileSync('./servers.json');  
 let servers = JSON.parse(rawdata);
 
 var name = "";
