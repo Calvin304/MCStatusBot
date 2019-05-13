@@ -63,6 +63,7 @@ client.on('message', message => {
 		servers.guilds.push({"name": message.guild.name, "id": message.guild.id,"prefix":"/","role": {"id": null,"name": null},"mcservers": []});
 		fs.writeFile('servers.json', JSON.stringify(servers, null, 2));
 		console.log('guild was missing from json and was restored');
+		guildindex = findWithAttr(servers.guilds, "id", message.guild.id)
 	}
 
 	if (message.isMentioned(client.user) || message.content === servers.guilds[guildindex].prefix + "help") {
