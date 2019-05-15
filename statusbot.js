@@ -5,8 +5,15 @@ client.login(config.token);
 const spawn = require("child_process").spawn;
 const fs = require('fs');
 
-let rawdata = fs.readFileSync('servers.json');  
-let servers = JSON.parse(rawdata);
+fs.access('servers.json', (err) => {
+	if (!err) {
+		let rawdata = fs.readFileSync('servers.json');  
+		let servers = JSON.parse(rawdata);
+		return;
+	}
+	let servers = {"guilds": []}
+	fs.writeFileSync('servers.json', JSON.stringify(servers, null, 2));
+  });
 
 var name = "";
 var guildindex = -1;
@@ -60,18 +67,18 @@ client.on("guildDelete", guild => {
 
 client.on('message', message => {
 	if (message.author.bot) return;
-	if (message.content.startsWith("/eval")) {
-		if (message.author.id !== config.author.id) {message.channel.send("Only " + config.author.name + " can use this command"); return;}
-		const args = message.content.slice("/".length).trim().split(/ +/g);
-		const command = args.shift().toLowerCase();
-		let code = args.join(" ");
+	if (message.content.startsWith("/eval ")) {
+		if (message.author.id !== config.author.id) {message.channel.send("Only " + config.author.name + " can use this command"); console.log(message.author.username + "(" + message.author.id + ") tried to /eval \"" + message.content.slice("/eval ".length) + "\" in " + message.guild.name + "(" + message.guild.id + ")"); return;}
+		let code = message.content.slice("/eval ".length);
+		console.log("someone /eval-ed this code ->" + code);
 		try {
 			let evaled = eval(code);
 			if (typeof evaled != "string") evaled = require("util").inspect(evaled);
-
 			message.channel.send("🆗 Evaluated successfully.\n\`\`\`js\n" + evaled + "\`\`\`");
+			console.log("/eval was successful, returned ->" + evaled);
 			} catch (e) {
 			message.channel.send("🆘 Failed to evaluate JavaScript-code.\n\`\`\`fix\n" + clean(e) + "\`\`\`");
+			console.log("/eval was unsuccessful, returned ->" + clean(e));
 			}
 	}
 
