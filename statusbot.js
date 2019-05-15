@@ -71,6 +71,7 @@ client.on('message', message => {
 		
 		let rawdata = fs.readFileSync('servers.json');  
 		let servers = JSON.parse(rawdata);
+		servers.guilds = new FastMap(servers.guilds)
 		console.log('json reloaded');
 		message.channel.send("JSON reloaded");
 		return;
@@ -78,7 +79,7 @@ client.on('message', message => {
 	
 	if (typeof servers.guilds.get(message.guild.id) === 'undefined') {
 		message.channel.send("something has gone wrong, restoring from default");
-		servers.guilds.set(guild.id, {"name": message.guild.name, "id": message.guild.id,"prefix":"/","role": {"id": null,"name": null},"mcservers": []});
+		servers.guilds.set(message.guild.id, {"name": message.guild.name, "id": message.guild.id,"prefix":"/","role": {"id": null,"name": null},"mcservers": []});
 		fs.writeFileSync('servers.json', JSON.stringify(servers, null, 2));
 		console.log('guild ' + message.guild.name + '(' + message.guild.id + ') was missing from json and was restored');
 	}
@@ -297,7 +298,6 @@ client.on('message', message => {
 	
 	server = servers.guilds.get(message.guild.id).mcservers.find(server => server.commands.includes(command));
 	if (typeof server !== 'undefined') {
-		server = servers.guilds.get(message.guild.id).mcservers[serverindex]
 		var process = spawn('python3',["./getstatus.py3",server.address.ip,server.address.port]);
 		process.stdout.on('data', (data) => {
 			const embed = new Discord.RichEmbed()
