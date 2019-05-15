@@ -2,8 +2,7 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const config = require("./config.json");
 client.login(config.token);
-const { Client, RichEmbed } = require('discord.js');
-var spawn = require("child_process").spawn;
+const spawn = require("child_process").spawn;
 const fs = require('fs');
 
 let rawdata = fs.readFileSync('servers.json');  
@@ -19,6 +18,12 @@ function findWithAttr(array, attr, value) {
         }
     }
     return -1;
+}
+
+function clean(text) {
+    if (typeof(text) === "string")
+      return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
+    else return text;
 }
 
 client.on("guildCreate", guild => {
@@ -43,9 +48,23 @@ client.on("guildDelete", guild => {
 
 client.on('message', message => {
 	if(message.author.bot) return;
-	
+	if (message.content === "/eval") {
+		if (!(message.author.id === config.author.id)) {message.channel.send("Only " + config.author.name + " can use this command"); return;}
+		const args = message.content.slice("/".length).trim().split(/ +/g);
+		const command = args.shift().toLowerCase();
+		let code = args.join(" ");
+		try {
+			let evaled = eval(code);
+			if (typeof evaled != "string") evaled = require("util").inspect(evaled);
+
+			message.channel.send("🆗 Evaluated successfully.\n\`\`\`js\n" + evaled + "\`\`\`");
+			} catch (e) {
+			message.channel.send("🆘 Failed to evaluate JavaScript-code.\n\`\`\`fix\n" + clean(e) + "\`\`\`");
+			}
+	}
+
 	if (message.content === "/reloadjson") {
-		if (!(message.author.id === config.authorid)) {message.channel.send("Only Calvin304 can use this command"); return;}
+		if (!(message.author.id === config.author.id)) {message.channel.send("Only " + config.author.name + " can use this command"); return;}
 		
 		let rawdata = fs.readFileSync('servers.json');  
 		let servers = JSON.parse(rawdata);
@@ -74,7 +93,7 @@ client.on('message', message => {
 	const command = args.shift().toLowerCase();
 	
 	if (command === "setrole") {
-		if (!(message.author.id === config.authorid || message.member.hasPermission("ADMINISTRATOR"))) {message.channel.send("Only Administrators can use this command"); return;}
+		if (!(message.author.id === config.author.id || message.member.hasPermission("ADMINISTRATOR"))) {message.channel.send("Only Administrators can use this command"); return;}
 		if (args.length < 1) {
 			message.channel.send("allowing everyone to use reserved commands, if this is a mistake, make sure to mention a role.");
 			servers.guilds[guildindex].role = {"id":null,"name":null}
@@ -91,7 +110,7 @@ client.on('message', message => {
 	}
 	
 	if (command === "setprefix") {
-		if (!(message.author.id === config.authorid || message.member.hasPermission("ADMINISTRATOR"))) {message.channel.send("Only Administrators can use this command"); return;}
+		if (!(message.author.id === config.author.id || message.member.hasPermission("ADMINISTRATOR"))) {message.channel.send("Only Administrators can use this command"); return;}
 		if (args.length < 1 || args.length > 1) {
 			message.channel.send("usage: " + servers.guilds[guildindex].prefix + "setprefix <prefix>");
 			return;
@@ -167,7 +186,7 @@ client.on('message', message => {
 		servernamelist.push(servers.guilds[guildindex].mcservers[i].name)
 		}
 
-		const embed = new RichEmbed()
+		const embed = new Discord.RichEmbed()
 		.setTitle("Servers:")
 		.setColor("FFFFFF")
 		.setDescription("```" + servernamelist.join("\n") + "```\nuse " + servers.guilds[guildindex].prefix + "serverproperties <name> to get more info about a server");
@@ -282,7 +301,7 @@ client.on('message', message => {
 			server = servers.guilds[guildindex].mcservers[i]
 			var process = spawn('python3',["./getstatus.py3",server.address.ip,server.address.port]);
 			process.stdout.on('data', (data) => {
-				const embed = new RichEmbed()
+				const embed = new Discord.RichEmbed()
 				.setTitle('Status of ' + server.name)
 				.setColor(server.color)
 				.setDescription(data.toString());

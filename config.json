@@ -1,4 +1,7 @@
 {
     "token": "Your-Token-Here",
-    "authorid": "Your-Discord-Id-Here"
+    "author": {
+        "name":"Your-Discord-Name-Here",
+        "id": "Your-Discord-Id-Here"
+    }
 }
