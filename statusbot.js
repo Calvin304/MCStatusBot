@@ -11,15 +11,6 @@ let servers = JSON.parse(rawdata);
 var name = "";
 var guildindex = -1;
 
-function findWithAttr(array, attr, value) {
-    for(var i = 0; i < array.length; i += 1) {
-        if(array[i][attr] === value) {
-            return i;
-        }
-    }
-    return -1;
-}
-
 function clean(text) {
     if (typeof(text) === "string")
       return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
@@ -39,7 +30,7 @@ client.on("guildCreate", guild => {
 client.on("guildUpdate", (oldGuild, newGuild) => {
 	if (oldGuild.name !== newGuild.name) {
 		console.log('guild ' + oldGuild.name + "changed to " + newGuild.name);
-		guildindex = findWithAttr(servers.guilds, "id", oldGuild.id);
+		guildindex = servers.guilds.findIndex(guild => guild.id === oldGuild.id)
 		servers.guilds[guildindex].name = newGuild.name;
 		let data = JSON.stringify(servers, null, 2);
 		fs.writeFile('servers.json', data, (err) => {  
@@ -51,7 +42,7 @@ client.on("guildUpdate", (oldGuild, newGuild) => {
 client.on("guildDelete", guild => {
 	// this event triggers when the bot is removed from a guild.
 	console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
-	servers.guilds.splice(findWithAttr(servers.guilds, "id", message.guild.id),1)
+	servers.guilds.splice(servers.guilds.findIndex(guild => guild.id === message.guild.id),1)
 	let data = JSON.stringify(servers, null, 2);
 	fs.writeFile('servers.json', data, (err) => {  
 		if (err) throw err;
@@ -86,14 +77,14 @@ client.on('message', message => {
 		return;
 	}
 	
-	guildindex = findWithAttr(servers.guilds, "id", message.guild.id)
+	guildindex = servers.guilds.findIndex(guild => guild.id === message.guild.id)
 	
 	if (guildindex === -1) {
 		message.channel.send("something has gone wrong, restoring from default");
 		servers.guilds.push({"name": message.guild.name, "id": message.guild.id,"prefix":"/","role": {"id": null,"name": null},"mcservers": []});
 		fs.writeFileSync('servers.json', JSON.stringify(servers, null, 2));
 		console.log('guild ' + message.guild.name + '(' + message.guild.id + ') was missing from json and was restored');
-		guildindex = findWithAttr(servers.guilds, "id", message.guild.id)
+		guildindex = servers.guilds.findIndex(guild => guild.id === message.guild.id)
 	}
 
 	if (message.isMentioned(client.user) || message.content === servers.guilds[guildindex].prefix + "help") {
@@ -163,7 +154,7 @@ client.on('message', message => {
 			return;
 		}
 		
-		servers.guilds[guildindex].mcservers.splice(findWithAttr(servers.guilds[guildindex].mcservers, "name", args[0]),1);
+		servers.guilds[guildindex].mcservers.splice(servers.guilds[guildindex].mcservers.findIndex(server => server.name === args[0]),1);
 		
 		let data = JSON.stringify(servers, null, 2);
 		fs.writeFile('servers.json', data, (err) => {  
@@ -216,7 +207,7 @@ client.on('message', message => {
 			return;
 		}
 		
-		serverindex = findWithAttr(servers.guilds[guildindex].mcservers, "name", args[0]);
+		serverindex = servers.guilds[guildindex].mcservers.findIndex(server => server.name === args[0]);
 		
 		if (args[1] === "name") {
 			if (args.length > 3) {
