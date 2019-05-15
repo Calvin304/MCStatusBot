@@ -6,7 +6,7 @@ const { Client, RichEmbed } = require('discord.js');
 var spawn = require("child_process").spawn;
 const fs = require('fs');
 
-let rawdata = fs.readFileSync('./servers.json');  
+let rawdata = fs.readFileSync('servers.json');  
 let servers = JSON.parse(rawdata);
 
 var name = "";
@@ -28,7 +28,6 @@ client.on("guildCreate", guild => {
 	let data = JSON.stringify(servers, null, 2);
 		fs.writeFile('servers.json', data, (err) => {  
 			if (err) throw err;
-			console.log('New guild added to json');
 		});
 });
 
@@ -39,7 +38,6 @@ client.on("guildDelete", guild => {
 	let data = JSON.stringify(servers, null, 2);
 		fs.writeFile('servers.json', data, (err) => {  
 			if (err) throw err;
-			console.log('guild deleted from json');
 		});
 });
 
@@ -51,7 +49,7 @@ client.on('message', message => {
 		
 		let rawdata = fs.readFileSync('servers.json');  
 		let servers = JSON.parse(rawdata);
-		
+		console.log('json reloaded');
 		message.channel.send("JSON reloaded");
 		return;
 	}
@@ -61,8 +59,8 @@ client.on('message', message => {
 	if (guildindex === -1) {
 		message.channel.send("something has gone wrong, restoring from default");
 		servers.guilds.push({"name": message.guild.name, "id": message.guild.id,"prefix":"/","role": {"id": null,"name": null},"mcservers": []});
-		fs.writeFile('servers.json', JSON.stringify(servers, null, 2));
-		console.log('guild was missing from json and was restored');
+		fs.writeFileSync('servers.json', JSON.stringify(servers, null, 2));
+		console.log('guild ' + message.guild.name + '(' + message.guild.id + ') was missing from json and was restored');
 		guildindex = findWithAttr(servers.guilds, "id", message.guild.id)
 	}
 
@@ -80,6 +78,7 @@ client.on('message', message => {
 		if (args.length < 1) {
 			message.channel.send("allowing everyone to use reserved commands, if this is a mistake, make sure to mention a role.");
 			servers.guilds[guildindex].role = {"id":null,"name":null}
+			console.log('role set to null in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
 			return;
 		}
 		servers.guilds[guildindex].role = message.mentions.roles.first()
@@ -87,7 +86,7 @@ client.on('message', message => {
 		let data = JSON.stringify(servers, null, 2);
 		fs.writeFile('servers.json', data, (err) => {  
 			if (err) throw err;
-			console.log('New server added');
+			console.log('role set to ' + servers.guilds[guildindex].role.name + ' in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
 		});
 	}
 	
@@ -102,7 +101,7 @@ client.on('message', message => {
 		let data = JSON.stringify(servers, null, 2);
 		fs.writeFile('servers.json', data, (err) => {  
 			if (err) throw err;
-			console.log('Prefix Changed for guild [' + guildindex + '] with id ' + servers.guilds[guildindex].id);
+			console.log('Prefix Changed to "' + servers.guilds[guildindex].prefix + '" for ' + message.guild.name + ' (id: ' + message.guild.id + ')');
 		});
 	}
 	
@@ -119,7 +118,7 @@ client.on('message', message => {
 		let data = JSON.stringify(servers, null, 2);
 		fs.writeFile('servers.json', data, (err) => {  
 			if (err) throw err;
-			console.log('New server added');
+			console.log('New server ' + newserver.name + 'added to ' + message.guild.name + ' (id: ' + message.guild.id + ')');
 		});
 		message.channel.send("Server added with name of "+ newserver.name)
 		return;
@@ -137,7 +136,7 @@ client.on('message', message => {
 		let data = JSON.stringify(servers, null, 2);
 		fs.writeFile('servers.json', data, (err) => {  
 			if (err) throw err;
-			console.log("Deleted Server " + args[0]);
+			console.log("Deleted Server " + args[0] + ' in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
 		});
 		
 		message.channel.send("Deleted Server " + args[0])
@@ -200,7 +199,7 @@ client.on('message', message => {
 			let data = JSON.stringify(servers, null, 2);
 			fs.writeFile('servers.json', data, (err) => {  
 				if (err) throw err;
-				console.log('server edited');
+				console.log('server edited in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
 			});
 			return;
 		}
@@ -218,7 +217,7 @@ client.on('message', message => {
 			let data = JSON.stringify(servers, null, 2);
 			fs.writeFile('servers.json', data, (err) => {  
 				if (err) throw err;
-				console.log('server edited');
+				console.log('server edited in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
 			});
 			return;
 		}
@@ -236,7 +235,7 @@ client.on('message', message => {
 			let data = JSON.stringify(servers, null, 2);
 			fs.writeFile('servers.json', data, (err) => {  
 				if (err) throw err;
-				console.log('server edited');
+				console.log('server edited in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
 			});
 			return;
 		}
@@ -254,7 +253,7 @@ client.on('message', message => {
 			let data = JSON.stringify(servers, null, 2);
 			fs.writeFile('servers.json', data, (err) => {  
 				if (err) throw err;
-				console.log('server edited');
+				console.log('server edited in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
 			});
 			return;
 		}
@@ -268,7 +267,7 @@ client.on('message', message => {
 			let data = JSON.stringify(servers, null, 2);
 			fs.writeFile('servers.json', data, (err) => {  
 				if (err) throw err;
-				console.log('server edited');
+				console.log('server edited in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
 			});
 			return;
 		}
