@@ -36,6 +36,17 @@ client.on("guildCreate", guild => {
 		});
 });
 
+client.on("guildUpdate", (oldGuild, newGuild) => {
+	// This event triggers when the bot joins a guild.
+	console.log('guild ' + oldGuild.name + "changed to " + newGuild.name);
+	guildindex = findWithAttr(servers.guilds, "id", oldGuild.id);
+	servers.guilds[guildindex].name = newGuild.name;
+	let data = JSON.stringify(servers, null, 2);
+		fs.writeFile('servers.json', data, (err) => {  
+			if (err) throw err;
+		});
+});
+
 client.on("guildDelete", guild => {
 	// this event triggers when the bot is removed from a guild.
 	console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
