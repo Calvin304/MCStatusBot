@@ -300,21 +300,20 @@ client.on('message', message => {
 	}
 	
 	//for loop checking if message matches any mcservers.commands
-	for (var i = 0; i < servers.guilds[guildindex].mcservers.length; i++) {
-		if (servers.guilds[guildindex].mcservers[i].commands.includes(command)) {
-			server = servers.guilds[guildindex].mcservers[i]
-			var process = spawn('python3',["./getstatus.py3",server.address.ip,server.address.port]);
-			process.stdout.on('data', (data) => {
-				const embed = new Discord.RichEmbed()
-				.setTitle('Status of ' + server.name)
-				.setColor(server.color)
-				.setDescription(data.toString());
-				message.channel.send(embed);
-			});
-			process.stderr.on('data', (data) => {
-				console.log(data.toString());
-			});
-		}
+	serverindex = servers.guilds[guildindex].mcservers.findIndex(server => server.commands.includes(command));
+	if (serverindex != -1) {
+		server = servers.guilds[guildindex].mcservers[serverindex]
+		var process = spawn('python3',["./getstatus.py3",server.address.ip,server.address.port]);
+		process.stdout.on('data', (data) => {
+			const embed = new Discord.RichEmbed()
+			.setTitle('Status of ' + server.name)
+			.setColor(server.color)
+			.setDescription(data.toString());
+			message.channel.send(embed);
+		});
+		process.stderr.on('data', (data) => {
+			console.log(data.toString());
+		});
 	}
 	
 });
