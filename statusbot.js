@@ -31,20 +31,21 @@ client.on("guildCreate", guild => {
 	console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
 	servers.guilds.push({"name": guild.name, "id" : guild.id,"prefix":"/","role": {"id": null,"name": null},"mcservers": []});
 	let data = JSON.stringify(servers, null, 2);
-		fs.writeFile('servers.json', data, (err) => {  
-			if (err) throw err;
-		});
+	fs.writeFile('servers.json', data, (err) => {  
+		if (err) throw err;
+	});
 });
 
 client.on("guildUpdate", (oldGuild, newGuild) => {
-	// This event triggers when the bot joins a guild.
-	console.log('guild ' + oldGuild.name + "changed to " + newGuild.name);
-	guildindex = findWithAttr(servers.guilds, "id", oldGuild.id);
-	servers.guilds[guildindex].name = newGuild.name;
-	let data = JSON.stringify(servers, null, 2);
+	if (oldGuild.name !== newGuild.name) {
+		console.log('guild ' + oldGuild.name + "changed to " + newGuild.name);
+		guildindex = findWithAttr(servers.guilds, "id", oldGuild.id);
+		servers.guilds[guildindex].name = newGuild.name;
+		let data = JSON.stringify(servers, null, 2);
 		fs.writeFile('servers.json', data, (err) => {  
 			if (err) throw err;
 		});
+	}
 });
 
 client.on("guildDelete", guild => {
@@ -52,9 +53,9 @@ client.on("guildDelete", guild => {
 	console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
 	servers.guilds.splice(findWithAttr(servers.guilds, "id", message.guild.id),1)
 	let data = JSON.stringify(servers, null, 2);
-		fs.writeFile('servers.json', data, (err) => {  
-			if (err) throw err;
-		});
+	fs.writeFile('servers.json', data, (err) => {  
+		if (err) throw err;
+	});
 });
 
 client.on('message', message => {
