@@ -60,7 +60,7 @@ client.on("guildDelete", guild => {
 
 client.on('message', message => {
 	if(message.author.bot) return;
-	if (message.content === "/eval") {
+	if (message.content.startsWith === "/eval") {
 		if (!(message.author.id === config.author.id)) {message.channel.send("Only " + config.author.name + " can use this command"); return;}
 		const args = message.content.slice("/".length).trim().split(/ +/g);
 		const command = args.shift().toLowerCase();
