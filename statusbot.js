@@ -5,15 +5,8 @@ client.login(config.token);
 const spawn = require("child_process").spawn;
 const fs = require('fs');
 
-fs.access('servers.json', (err) => {
-	if (!err) {
-		let rawdata = fs.readFileSync('servers.json');  
-		let servers = JSON.parse(rawdata);
-		return;
-	}
-	let servers = {"guilds": []}
-	fs.writeFileSync('servers.json', JSON.stringify(servers, null, 2));
-  });
+let rawdata = fs.readFileSync('servers.json');  
+let servers = JSON.parse(rawdata);
 
 var name = "";
 var guildindex = -1;
