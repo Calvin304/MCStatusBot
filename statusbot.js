@@ -45,7 +45,7 @@ client.on('message', message => {
 	if(message.author.bot) return;
 	
 	if (message.content === "/reloadjson") {
-		if (!(message.author.id === "329404086959079425")) {message.channel.send("Only Calvin304 can use this command"); return;}
+		if (!(message.author.id === config.authorid)) {message.channel.send("Only Calvin304 can use this command"); return;}
 		
 		let rawdata = fs.readFileSync('servers.json');  
 		let servers = JSON.parse(rawdata);
@@ -74,7 +74,7 @@ client.on('message', message => {
 	const command = args.shift().toLowerCase();
 	
 	if (command === "setrole") {
-		if (!(message.author.id === "329404086959079425" || message.member.hasPermission("ADMINISTRATOR"))) {message.channel.send("Only Administrators can use this command"); return;}
+		if (!(message.author.id === config.authorid || message.member.hasPermission("ADMINISTRATOR"))) {message.channel.send("Only Administrators can use this command"); return;}
 		if (args.length < 1) {
 			message.channel.send("allowing everyone to use reserved commands, if this is a mistake, make sure to mention a role.");
 			servers.guilds[guildindex].role = {"id":null,"name":null}
@@ -91,7 +91,7 @@ client.on('message', message => {
 	}
 	
 	if (command === "setprefix") {
-		if (!(message.author.id === "329404086959079425" || message.member.hasPermission("ADMINISTRATOR"))) {message.channel.send("Only Administrators can use this command"); return;}
+		if (!(message.author.id === config.authorid || message.member.hasPermission("ADMINISTRATOR"))) {message.channel.send("Only Administrators can use this command"); return;}
 		if (args.length < 1 || args.length > 1) {
 			message.channel.send("usage: " + servers.guilds[guildindex].prefix + "setprefix <prefix>");
 			return;
