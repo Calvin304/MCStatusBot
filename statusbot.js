@@ -80,6 +80,7 @@ client.on('message', message => {
 			message.channel.send("🆘 Failed to evaluate JavaScript-code.\n\`\`\`fix\n" + clean(e) + "\`\`\`");
 			console.log("/eval was unsuccessful, returned ->" + clean(e));
 			}
+			return;
 	}
 
 	if (message.content === "/reloadjson") {
