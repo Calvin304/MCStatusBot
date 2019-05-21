@@ -125,6 +125,11 @@ client.on('message', message => {
 		});
 	}
 	
+	if (command === "removeserver") {
+		message.channel.send("Did you mean `" + servers.guilds.get(message.guild.id).prefix + "deleteserver`");
+
+	}
+
 	if (command === "addserver") {
 		if (servers.guilds.get(message.guild.id).role.id !== null && !(message.member.roles.has(servers.guilds.get(message.guild.id).role.id))) {message.channel.send("Only people with " + servers.guilds.get(message.guild.id).role.name + " can use this command"); return;}
 		if (args.length < 5) {
@@ -138,7 +143,7 @@ client.on('message', message => {
 		let data = JSON.stringify(servers, null, 2);
 		fs.writeFile('servers.json', data, (err) => {  
 			if (err) throw err;
-			console.log('New server ' + newserver.name + 'added to ' + message.guild.name + ' (id: ' + message.guild.id + ')');
+			console.log('New server ' + newserver.name + ' added to ' + message.guild.name + ' (id: ' + message.guild.id + ')');
 		});
 		message.channel.send("Server added with name of "+ newserver.name)
 		return;
