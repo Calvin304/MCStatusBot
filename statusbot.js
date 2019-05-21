@@ -127,7 +127,6 @@ client.on('message', message => {
 	
 	if (command === "removeserver") {
 		message.channel.send("Did you mean `" + servers.guilds.get(message.guild.id).prefix + "deleteserver`");
-
 	}
 
 	if (command === "addserver") {
