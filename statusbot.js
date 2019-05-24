@@ -131,12 +131,12 @@ client.on('message', message => {
 
 	if (command === "addserver") {
 		if (servers.guilds.get(message.guild.id).role.id !== null && !(message.member.roles.has(servers.guilds.get(message.guild.id).role.id))) {message.channel.send("Only people with " + servers.guilds.get(message.guild.id).role.name + " can use this command"); return;}
-		if (args.length < 5) {
-			message.channel.send("Usage: " + servers.guilds.get(message.guild.id).prefix + "addserver <name> <ip/url> <port (write 25565 if no port)> <color as hex> <command1> <command2> ...");
+		if (args.length < 4) {
+			message.channel.send("Usage: " + servers.guilds.get(message.guild.id).prefix + "addserver <name> <ip/url> <port (write 25565 if no port)> <command1> <command2> ...");
 			return;
 		}
-		var cmds = args.splice(4,args.length - 4);
-		var newserver = {"name": args[0],"commands": cmds,"address": {"ip": args[1],"port": args[2]},"color": args[3]}
+		var cmds = args.splice(3,args.length - 3);
+		var newserver = {"name": args[0],"commands": cmds,"address": {"ip": args[1],"port": args[2]},}
 		servers.guilds.get(message.guild.id).mcservers.push(newserver)
 		
 		let data = JSON.stringify(servers, null, 2);
@@ -177,7 +177,7 @@ client.on('message', message => {
 		
 		for (var i = 0; i < servers.guilds.get(message.guild.id).mcservers.length; i++) {
 			if (servers.guilds.get(message.guild.id).mcservers[i].name === name) {
-				message.channel.send("Server: `" + servers.guilds.get(message.guild.id).mcservers[i].name + "`\nIp/Url: `" + servers.guilds.get(message.guild.id).mcservers[i].address.ip + "`\nPort: `" + servers.guilds.get(message.guild.id).mcservers[i].address.port + "`\nColor: `" + servers.guilds.get(message.guild.id).mcservers[i].color + "`\nCommand(s): `" + servers.guilds.get(message.guild.id).prefix + servers.guilds.get(message.guild.id).mcservers[i].commands.join(" " + servers.guilds.get(message.guild.id).prefix + "") + "`")
+				message.channel.send("Server: `" + servers.guilds.get(message.guild.id).mcservers[i].name + "`\nIp/Url: `" + servers.guilds.get(message.guild.id).mcservers[i].address.ip + "`\nPort: `" + servers.guilds.get(message.guild.id).mcservers[i].address.port + "`\nCommand(s): `" + servers.guilds.get(message.guild.id).prefix + servers.guilds.get(message.guild.id).mcservers[i].commands.join(" " + servers.guilds.get(message.guild.id).prefix + "") + "`")
 				return;
 			}
 		}
@@ -204,7 +204,7 @@ client.on('message', message => {
 		if (servers.guilds.get(message.guild.id).role.id !== null && !(message.member.roles.has(servers.guilds.get(message.guild.id).role.id))) {message.channel.send("Only people with " + servers.guilds.get(message.guild.id).role.name + " can use this command"); return;}
 		
 		if (args.length < 3) {
-			message.channel.send("Usage: " + servers.guilds.get(message.guild.id).prefix + "editserver <server> [name, ip, port, color, command(s)] <value1> <value2>");
+			message.channel.send("Usage: " + servers.guilds.get(message.guild.id).prefix + "editserver <server> [name, ip, port, command(s)] <value1> <value2>");
 			return;
 		}
 		
@@ -264,24 +264,6 @@ client.on('message', message => {
 			return;
 		}
 		
-		if (args[1] === "color") {
-			if (args.length > 3) {
-			message.channel.send("attribute `color` can only have one value");
-			return;
-			}
-			
-			servers.guilds.get(message.guild.id).mcservers[serverindex].color = args[2];
-			
-			message.channel.send("server attribute `" + args[1] + "` was changed to `" + args[2] + "`");
-			
-			let data = JSON.stringify(servers, null, 2);
-			fs.writeFile('servers.json', data, (err) => {  
-				if (err) throw err;
-				console.log('server edited in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
-			});
-			return;
-		}
-		
 		if (args[1] === "command(s)") {
 			var cmds = args.splice(2,args.length - 2);
 			
@@ -304,11 +286,40 @@ client.on('message', message => {
 	if (typeof server !== 'undefined') {
 		var process = spawn('python3',["./getstatus.py3",server.address.ip,server.address.port]);
 		process.stdout.on('data', (data) => {
-			const embed = new Discord.RichEmbed()
-			.setTitle('Status of ' + server.name)
-			.setColor(server.color)
-			.setDescription(data.toString());
-			message.channel.send(embed);
+    	response = JSON.parse(data.toString());
+    	if (response.error == null) {
+		  	const embed = new Discord.RichEmbed()
+	  		.setTitle('Status of ' + server.name)
+	  		.setColor("00FF00")
+      	.setDescription("`" + response.description.text + "`\n")
+      	.addField("There " + ((response.players.online === 1)?"is **":"are **") + response.players.online + "/" + response.players.max +"** players online", ((response.players.online === 0)?"🙁":"`" + response.players.sample.map(player => player.name).join(", ") + "`"), true)
+      	;client.channels.get("567043605194342420").send(embed);
+      	return;
+    	};
+    	if (response.error == "Connection Timed Out") {
+				const embed = new Discord.RichEmbed()
+		  	.setTitle('Status of ' + server.name)
+	  		.setColor("FF0000")
+	  		.setDescription("Connection Timed Out (server is offline)");
+  	    client.channels.get("567043605194342420").send(embed);
+	      return;
+    	};
+    	if (response.error == "Connection Refused") {
+      	const embed = new Discord.RichEmbed()
+	  		.setTitle('Status of ' + server.name)
+		  	.setColor("FF0000")
+		  	.setDescription("Connection Refused (either the server is online but the minecraft server isnt running or the port is wrong)");
+      	client.channels.get("567043605194342420").send(embed);
+    	  return;
+  	  };
+	    if (response.error == "IOError") {
+      	const embed = new Discord.RichEmbed()
+	  		.setTitle('Status of ' + server.name)
+		  	.setColor("0000FF")
+		  	.setDescription("The Service running is not a Minecraft Server (check ip/url and port)");
+   	  	client.channels.get("567043605194342420").send(embed);
+   	  	return;
+   	 }
 		});
 		process.stderr.on('data', (data) => {
 			console.log(data.toString());
