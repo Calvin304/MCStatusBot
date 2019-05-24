@@ -293,7 +293,7 @@ client.on('message', message => {
 	  		.setColor("00FF00")
       	.setDescription("`" + response.description.text + "`\n")
       	.addField("There " + ((response.players.online === 1)?"is **":"are **") + response.players.online + "/" + response.players.max +"** players online", ((response.players.online === 0)?"🙁":"`" + response.players.sample.map(player => player.name).join(", ") + "`"), true)
-      	;client.channels.get("567043605194342420").send(embed);
+      	;message.channel.send(embed);
       	return;
     	};
     	if (response.error == "Connection Timed Out") {
@@ -301,7 +301,7 @@ client.on('message', message => {
 		  	.setTitle('Status of ' + server.name)
 	  		.setColor("FF0000")
 	  		.setDescription("Connection Timed Out (server is offline)");
-  	    client.channels.get("567043605194342420").send(embed);
+  	    message.channel.send(embed);
 	      return;
     	};
     	if (response.error == "Connection Refused") {
@@ -309,7 +309,7 @@ client.on('message', message => {
 	  		.setTitle('Status of ' + server.name)
 		  	.setColor("FF0000")
 		  	.setDescription("Connection Refused (either the server is online but the minecraft server isnt running or the port is wrong)");
-      	client.channels.get("567043605194342420").send(embed);
+      	message.channel.send(embed);
     	  return;
   	  };
 	    if (response.error == "IOError") {
@@ -317,7 +317,7 @@ client.on('message', message => {
 	  		.setTitle('Status of ' + server.name)
 		  	.setColor("0000FF")
 		  	.setDescription("The Service running is not a Minecraft Server (check ip/url and port)");
-   	  	client.channels.get("567043605194342420").send(embed);
+   	  	message.channel.send(embed);
    	  	return;
    	 }
 		});
