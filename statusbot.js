@@ -154,7 +154,11 @@ client.on('message', message => {
 			message.channel.send("Usage: " + servers.guilds.get(message.guild.id).prefix + "deleteserver <name>");
 			return;
 		}
-		
+		if (servers.guilds.get(message.guild.id).mcservers.findIndex(server => server.name === args[0]) === -1) {
+			message.channel.send(args[0] + "is not a valid server")
+			return;
+		};
+
 		servers.guilds.get(message.guild.id).mcservers.splice(servers.guilds.get(message.guild.id).mcservers.findIndex(server => server.name === args[0]),1);
 		
 		let data = JSON.stringify(servers, null, 2);
@@ -194,7 +198,7 @@ client.on('message', message => {
 		const embed = new Discord.RichEmbed()
 		.setTitle("Servers:")
 		.setColor("FFFFFF")
-		.setDescription("```" + servernamelist.join("\n") + "```\nuse " + servers.guilds.get(message.guild.id).prefix + "serverproperties <name> to get more info about a server");
+		.setDescription((servernamelist.length != 0?"```" + servernamelist.join("\n") + "```":"no servers found, use `" + servers.guilds.get(message.guild.id).prefix + "addserver` to change that")+"\nuse " + servers.guilds.get(message.guild.id).prefix + "serverproperties <name> to get more info about a server");
 		message.channel.send(embed);
 		return;
 		
