@@ -54,6 +54,8 @@ client.on("guildDelete", guild => {
 	});
 });
 
+client.on('error' => console.error);
+
 client.on('message', message => {
 	if (message.author.bot) return;
 	if (message.content.startsWith("/eval ")) {
@@ -297,33 +299,33 @@ client.on('message', message => {
 		mc.ping({host:server.address.ip,port:server.address.port},(err, pingResults) => {
 			if (err) {
 				const embed = new Discord.RichEmbed()
-		  	.setTitle('Status of ' + server.name)
-	  		.setColor("FF0000")
-	  		.setDescription(err);
-  	    message.channel.send(embed);
-	      return;
-			}
+		  		.setTitle('Status of ' + server.name)
+	  			.setColor("FF0000")
+	  			.setDescription(err);
+  	    			message.channel.send(embed);
+	    			  return;
+			};
 
 			if (pingResults.favicon !== undefined) {
 				base64ToPNG(pingResults.favicon);
 				const embed = new Discord.RichEmbed()
-	  		.setTitle('Status of ' + server.name)
+	  			.setTitle('Status of ' + server.name)
 				.setColor("00FF00")
 				.attachFile({attachment:Buffer.from(pingResults.favicon.replace(/^data:image\/png;base64,/, ''), 'base64'),name:"image.png"})
-      	.setThumbnail("attachment://image.png")
+      				.setThumbnail("attachment://image.png")
 				.setDescription( (pingResults.description.text == "")?"":"`" + pingResults.description.text + "`")
-      .addField("There " + ((pingResults.players.online === 1)?"is **":"are **") + pingResults.players.online + "/" + pingResults.players.max +"** players online", ((pingResults.players.sample == undefined)?"🙁":"`" + pingResults.players.sample.map(player => player.name).join(", ") + "`"), true)
-      	;message.channel.send(embed);
-    		return;
+      				.addField("There " + ((pingResults.players.online === 1)?"is **":"are **") + pingResults.players.online + "/" + pingResults.players.max +"** players online", ((pingResults.players.sample == undefined)?"🙁":"`" + pingResults.players.sample.map(player => player.name).join(", ") + "`"), true)
+      				;message.channel.send(embed);
+    				return;
 			};
-	  	const embed = new Discord.RichEmbed()
-	  	.setTitle('Status of ' + server.name)
-	  	.setColor("00FF00")
+	  		const embed = new Discord.RichEmbed()
+	  		.setTitle('Status of ' + server.name)
+	  		.setColor("00FF00")
 			.setDescription( (pingResults.description.text == "")?"":"`" + pingResults.description.text + "`")
-      .addField("There " + ((pingResults.players.online === 1)?"is **":"are **") + pingResults.players.online + "/" + pingResults.players.max +"** players online", ((pingResults.players.sample == undefined)?"🙁":"`" + pingResults.players.sample.map(player => player.name).join(", ") + "`"), true)
-      ;message.channel.send(embed);
-    	return;
-    });
+      			.addField("There " + ((pingResults.players.online === 1)?"is **":"are **") + pingResults.players.online + "/" + pingResults.players.max +"** players online", ((pingResults.players.sample == undefined)?"🙁":"`" + pingResults.players.sample.map(player => player.name).join(", ") + "`"), true)
+      			;message.channel.send(embed);
+    			return;
+    		});
     	
 	};
 	
