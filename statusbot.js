@@ -54,7 +54,7 @@ client.on("guildDelete", guild => {
 	});
 });
 
-client.on('error' => console.error);
+client.on('error', error => console.error);
 
 client.on('message', message => {
 	if (message.author.bot) return;
