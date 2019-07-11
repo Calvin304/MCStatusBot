@@ -5,7 +5,7 @@ client.login(config.token);
 const spawn = require("child_process").spawn;
 const fs = require('fs');
 var FastMap = require("collections/fast-map.js");
-var mc = require('minecraft-protocol');
+const ping = require("./ping.js");
 
 
 let rawdata = fs.readFileSync('servers.json');  
@@ -296,37 +296,10 @@ client.on('message', message => {
 	
 	server = servers.guilds.get(message.guild.id).mcservers.find(server => server.commands.includes(command));
 	if (typeof server !== 'undefined') {
-		mc.ping({host:server.address.ip,port:server.address.port},(err, pingResults) => {
-			if (err) {
-				const embed = new Discord.RichEmbed()
-		  		.setTitle('Status of ' + server.name)
-	  			.setColor("FF0000")
-	  			.setDescription(err);
-  	    			message.channel.send(embed);
-	    			  return;
-			};
-
-			if (pingResults.favicon !== undefined) {
-				base64ToPNG(pingResults.favicon);
-				const embed = new Discord.RichEmbed()
-	  			.setTitle('Status of ' + server.name)
-				.setColor("00FF00")
-				.attachFile({attachment:Buffer.from(pingResults.favicon.replace(/^data:image\/png;base64,/, ''), 'base64'),name:"image.png"})
-      				.setThumbnail("attachment://image.png")
-				.setDescription( (pingResults.description.text == "")?"":"`" + pingResults.description.text + "`")
-      				.addField("There " + ((pingResults.players.online === 1)?"is **":"are **") + pingResults.players.online + "/" + pingResults.players.max +"** players online", ((pingResults.players.sample == undefined)?"🙁":"`" + pingResults.players.sample.map(player => player.name).join(", ") + "`"), true)
-      				;message.channel.send(embed);
-    				return;
-			};
-	  		const embed = new Discord.RichEmbed()
-	  		.setTitle('Status of ' + server.name)
-	  		.setColor("00FF00")
-			.setDescription( (pingResults.description.text == "")?"":"`" + pingResults.description.text + "`")
-      			.addField("There " + ((pingResults.players.online === 1)?"is **":"are **") + pingResults.players.online + "/" + pingResults.players.max +"** players online", ((pingResults.players.sample == undefined)?"🙁":"`" + pingResults.players.sample.map(player => player.name).join(", ") + "`"), true)
-      			;message.channel.send(embed);
-    			return;
-    		});
-    	
+		ping(server, (err, embed) => {
+			if (err) {console.log(err);message.channel.send(err);}
+			message.channel.send(embed)
+		})
 	};
 	
 });
