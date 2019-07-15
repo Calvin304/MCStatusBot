@@ -1,0 +1,25 @@
+{
+  "name": "mcstatusbot",
+  "version": "1.0.0",
+  "description": "Discord Bot to Check Status' of Minecraft Servers",
+  "main": "statusbot.js",
+  "dependencies": {
+    "collections": "^5.1.9",
+    "discord.js": "^11.5.1",
+    "minecraft-protocol": "^1.9.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Calvin304/MCStatusBot.git"
+  },
+  "author": "Calvin304",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Calvin304/MCStatusBot/issues"
+  },
+  "homepage": "https://github.com/Calvin304/MCStatusBot#readme"
+}
