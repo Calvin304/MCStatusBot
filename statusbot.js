@@ -100,206 +100,211 @@ client.on('message', message => {
 	
 	const args = message.content.slice(servers.guilds.get(message.guild.id).prefix.length).trim().split(/ +/g);
 	const command = args.shift().toLowerCase();
-	
-	if (command === "setrole") {
-		if (!(message.author.id === config.author.id || message.member.hasPermission("ADMINISTRATOR"))) {message.channel.send("Only Administrators can use this command"); return;}
-		if (args.length < 1) {
-			message.channel.send("allowing everyone to use reserved commands, if this is a mistake, make sure to mention a role.");
-			servers.guilds.get(message.guild.id).role = {"id":null,"name":null}
-			console.log('role set to null in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
-			return;
+	switch (command) {
+		case "setrole": {
+			if (!(message.author.id === config.author.id || message.member.hasPermission("ADMINISTRATOR"))) {message.channel.send("Only Administrators can use this command"); return;}
+			if (args.length < 1) {
+				message.channel.send("allowing everyone to use reserved commands, if this is a mistake, make sure to mention a role.");
+				servers.guilds.get(message.guild.id).role = {"id":null,"name":null}
+				console.log('role set to null in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
+				return;
+			}
+			servers.guilds.get(message.guild.id).role = message.mentions.roles.first()
+			message.channel.send("allowing " + servers.guilds.get(message.guild.id).role.name + " to use reserved commands");
+			let data = JSON.stringify(servers, null, 2);
+			fs.writeFile('servers.json', data, (err) => {  
+				if (err) throw err;
+				console.log('role set to ' + servers.guilds.get(message.guild.id).role.name + ' in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
+			});
 		}
-		servers.guilds.get(message.guild.id).role = message.mentions.roles.first()
-		message.channel.send("allowing " + servers.guilds.get(message.guild.id).role.name + " to use reserved commands");
-		let data = JSON.stringify(servers, null, 2);
-		fs.writeFile('servers.json', data, (err) => {  
-			if (err) throw err;
-			console.log('role set to ' + servers.guilds.get(message.guild.id).role.name + ' in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
-		});
-	}
-	
-	if (command === "setprefix") {
-		if (!(message.author.id === config.author.id || message.member.hasPermission("ADMINISTRATOR"))) {message.channel.send("Only Administrators can use this command"); return;}
-		if (args.length < 1 || args.length > 1) {
-			message.channel.send("usage: " + servers.guilds.get(message.guild.id).prefix + "setprefix <prefix>");
-			return;
+		
+		case "setprefix": {
+			if (!(message.author.id === config.author.id || message.member.hasPermission("ADMINISTRATOR"))) {message.channel.send("Only Administrators can use this command"); return;}
+			if (args.length < 1 || args.length > 1) {
+				message.channel.send("usage: " + servers.guilds.get(message.guild.id).prefix + "setprefix <prefix>");
+				return;
+			}
+			servers.guilds.get(message.guild.id).prefix = args[0];
+			message.channel.send("Setting prefix to `" + servers.guilds.get(message.guild.id).prefix + "`");
+			let data = JSON.stringify(servers, null, 2);
+			fs.writeFile('servers.json', data, (err) => {  
+				if (err) throw err;
+				console.log('Prefix Changed to "' + servers.guilds.get(message.guild.id).prefix + '" for ' + message.guild.name + ' (id: ' + message.guild.id + ')');
+			});
 		}
-		servers.guilds.get(message.guild.id).prefix = args[0];
-		message.channel.send("Setting prefix to `" + servers.guilds.get(message.guild.id).prefix + "`");
-		let data = JSON.stringify(servers, null, 2);
-		fs.writeFile('servers.json', data, (err) => {  
-			if (err) throw err;
-			console.log('Prefix Changed to "' + servers.guilds.get(message.guild.id).prefix + '" for ' + message.guild.name + ' (id: ' + message.guild.id + ')');
-		});
-	}
-	
-	if (command === "removeserver") {
-		message.channel.send("Did you mean `" + servers.guilds.get(message.guild.id).prefix + "deleteserver`");
-	}
+		
+		case "removeserver": {
+			message.channel.send("Did you mean `" + servers.guilds.get(message.guild.id).prefix + "deleteserver`");
+		}
 
-	if (command === "addserver") {
-		if (servers.guilds.get(message.guild.id).role.id !== null && !(message.member.roles.has(servers.guilds.get(message.guild.id).role.id))) {message.channel.send("Only people with " + servers.guilds.get(message.guild.id).role.name + " can use this command"); return;}
-		if (args.length < 4) {
-			message.channel.send("Usage: " + servers.guilds.get(message.guild.id).prefix + "addserver <name> <ip/url> <port (write 25565 if no port)> <command1> <command2> ...");
+		case "addserver": {
+			if (servers.guilds.get(message.guild.id).role.id !== null && !(message.member.roles.has(servers.guilds.get(message.guild.id).role.id))) {message.channel.send("Only people with " + servers.guilds.get(message.guild.id).role.name + " can use this command"); return;}
+			if (args.length < 4) {
+				message.channel.send("Usage: " + servers.guilds.get(message.guild.id).prefix + "addserver <name> <ip/url> <port (write 25565 if no port)> <command1> <command2> ...");
+				return;
+			}
+			var cmds = args.splice(3,args.length - 3);
+			var newserver = {"name": args[0],"commands": cmds,"address": {"ip": args[1],"port": args[2]},}
+			servers.guilds.get(message.guild.id).mcservers.push(newserver)
+			
+			let data = JSON.stringify(servers, null, 2);
+			fs.writeFile('servers.json', data, (err) => {  
+				if (err) throw err;
+				console.log('New server ' + newserver.name + ' added to ' + message.guild.name + ' (id: ' + message.guild.id + ')');
+			});
+			message.channel.send("Server added with name of "+ newserver.name)
 			return;
 		}
-		var cmds = args.splice(3,args.length - 3);
-		var newserver = {"name": args[0],"commands": cmds,"address": {"ip": args[1],"port": args[2]},}
-		servers.guilds.get(message.guild.id).mcservers.push(newserver)
 		
-		let data = JSON.stringify(servers, null, 2);
-		fs.writeFile('servers.json', data, (err) => {  
-			if (err) throw err;
-			console.log('New server ' + newserver.name + ' added to ' + message.guild.name + ' (id: ' + message.guild.id + ')');
-		});
-		message.channel.send("Server added with name of "+ newserver.name)
-		return;
-	}
-	
-	if (command === "deleteserver") {
-		if (servers.guilds.get(message.guild.id).role.id !== null && !(message.member.roles.has(servers.guilds.get(message.guild.id).role.id))) {message.channel.send("Only people with " + servers.guilds.get(message.guild.id).role.name + " can use this command"); return;}
-		if (args.length < 1) {
-			message.channel.send("Usage: " + servers.guilds.get(message.guild.id).prefix + "deleteserver <name>");
-			return;
-		}
-		if (servers.guilds.get(message.guild.id).mcservers.findIndex(server => server.name === args[0]) === -1) {
-			message.channel.send(args[0] + "is not a valid server")
-			return;
-		};
+		case "deleteserver": {
+			if (servers.guilds.get(message.guild.id).role.id !== null && !(message.member.roles.has(servers.guilds.get(message.guild.id).role.id))) {message.channel.send("Only people with " + servers.guilds.get(message.guild.id).role.name + " can use this command"); return;}
+			if (args.length < 1) {
+				message.channel.send("Usage: " + servers.guilds.get(message.guild.id).prefix + "deleteserver <name>");
+				return;
+			}
+			if (servers.guilds.get(message.guild.id).mcservers.findIndex(server => server.name === args[0]) === -1) {
+				message.channel.send(args[0] + "is not a valid server")
+				return;
+			};
 
-		servers.guilds.get(message.guild.id).mcservers.splice(servers.guilds.get(message.guild.id).mcservers.findIndex(server => server.name === args[0]),1);
-		
-		let data = JSON.stringify(servers, null, 2);
-		fs.writeFile('servers.json', data, (err) => {  
-			if (err) throw err;
-			console.log("Deleted Server " + args[0] + ' in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
-		});
-		
-		message.channel.send("Deleted Server " + args[0])
-		return;
-	}
-	
-	if (command === "serverproperties") {
-		if (args.length < 1) {
-			message.channel.send("Usage: " + servers.guilds.get(message.guild.id).prefix + "serverproperties <name>");
+			servers.guilds.get(message.guild.id).mcservers.splice(servers.guilds.get(message.guild.id).mcservers.findIndex(server => server.name === args[0]),1);
+			
+			let data = JSON.stringify(servers, null, 2);
+			fs.writeFile('servers.json', data, (err) => {  
+				if (err) throw err;
+				console.log("Deleted Server " + args[0] + ' in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
+			});
+			
+			message.channel.send("Deleted Server " + args[0])
 			return;
 		}
 		
-		var name = args.join(" ");
+		case "serverproperties": {
+			if (args.length < 1) {
+				message.channel.send("Usage: " + servers.guilds.get(message.guild.id).prefix + "serverproperties <name>");
+				return;
+			}
+			
+			var name = args.join(" ");
+			
+			for (var i = 0; i < servers.guilds.get(message.guild.id).mcservers.length; i++) {
+				if (servers.guilds.get(message.guild.id).mcservers[i].name === name) {
+					message.channel.send("Server: `" + servers.guilds.get(message.guild.id).mcservers[i].name + "`\nIp/Url: `" + servers.guilds.get(message.guild.id).mcservers[i].address.ip + "`\nPort: `" + servers.guilds.get(message.guild.id).mcservers[i].address.port + "`\nCommand(s): `" + servers.guilds.get(message.guild.id).prefix + servers.guilds.get(message.guild.id).mcservers[i].commands.join(" " + servers.guilds.get(message.guild.id).prefix + "") + "`")
+					return;
+				}
+			}
+			message.channel.send("please enter a valid server name")
+			return;
+		}
 		
-		for (var i = 0; i < servers.guilds.get(message.guild.id).mcservers.length; i++) {
-			if (servers.guilds.get(message.guild.id).mcservers[i].name === name) {
-				message.channel.send("Server: `" + servers.guilds.get(message.guild.id).mcservers[i].name + "`\nIp/Url: `" + servers.guilds.get(message.guild.id).mcservers[i].address.ip + "`\nPort: `" + servers.guilds.get(message.guild.id).mcservers[i].address.port + "`\nCommand(s): `" + servers.guilds.get(message.guild.id).prefix + servers.guilds.get(message.guild.id).mcservers[i].commands.join(" " + servers.guilds.get(message.guild.id).prefix + "") + "`")
+		case "listservers": {
+			var servernamelist = []
+			for (var i = 0; i < servers.guilds.get(message.guild.id).mcservers.length; i++) {
+			servernamelist.push(servers.guilds.get(message.guild.id).mcservers[i].name)
+			}
+
+			const embed = new Discord.RichEmbed()
+			.setTitle("Servers:")
+			.setColor("FFFFFF")
+			.setDescription((servernamelist.length != 0?"```" + servernamelist.join("\n") + "```":"no servers found, use `" + servers.guilds.get(message.guild.id).prefix + "addserver` to change that")+"\nuse " + servers.guilds.get(message.guild.id).prefix + "serverproperties <name> to get more info about a server");
+			message.channel.send(embed);
+			return;
+			
+		}
+		
+		case "editserver": {
+			if (servers.guilds.get(message.guild.id).role.id !== null && !(message.member.roles.has(servers.guilds.get(message.guild.id).role.id))) {message.channel.send("Only people with " + servers.guilds.get(message.guild.id).role.name + " can use this command"); return;}
+			
+			if (args.length < 3) {
+				message.channel.send("Usage: " + servers.guilds.get(message.guild.id).prefix + "editserver <server> [name, ip, port, command(s)] <value> [values]");
+				return;
+			}
+			
+			serverindex = servers.guilds.get(message.guild.id).mcservers.findIndex(server => server.name === args[0]);
+			switch (args[1]) {
+				case "name": {
+					if (args.length > 3) {
+					message.channel.send("attribute `name` can only have one value");
+					return;
+					}
+					
+					servers.guilds.get(message.guild.id).mcservers[serverindex].name = args[2];
+					
+					message.channel.send("server `" + args[0] + "` was renamed to `" + args[2] + "`");
+					
+					let data = JSON.stringify(servers, null, 2);
+					fs.writeFile('servers.json', data, (err) => {  
+						if (err) throw err;
+						console.log('server edited in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
+					});
+					return;
+				}
+				
+				case "ip": {
+					if (args.length > 3) {
+					message.channel.send("attribute `ip` can only have one value");
+					return;
+					}
+					
+					servers.guilds.get(message.guild.id).mcservers[serverindex].address.ip = args[2];
+					
+					message.channel.send("server attribute `" + args[1] + "` was changed to `" + args[2] + "`");
+					
+					let data = JSON.stringify(servers, null, 2);
+					fs.writeFile('servers.json', data, (err) => {  
+						if (err) throw err;
+						console.log('server edited in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
+					});
+					return;
+				}
+				
+				case "port": {
+					if (args.length > 3) {
+					message.channel.send("attribute `name` can only have one value");
+					return;
+					}
+					
+					servers.guilds.get(message.guild.id).mcservers[serverindex].address.port = args[2];
+					
+					message.channel.send("server attribute `" + args[1] + "` was changed to `" + args[2] + "`");
+					
+					let data = JSON.stringify(servers, null, 2);
+					fs.writeFile('servers.json', data, (err) => {  
+						if (err) throw err;
+						console.log('server edited in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
+					});
+					return;
+				}
+				
+				case "command(s)": {
+					var cmds = args.splice(2,args.length - 2);
+					
+					servers.guilds.get(message.guild.id).mcservers[serverindex].commands = cmds
+					
+					message.channel.send("server attribute `" + args[1] + "` was changed to `" + servers.guilds.get(message.guild.id).prefix + "" + cmds.join(" " + servers.guilds.get(message.guild.id).prefix + "") + "`");
+					let data = JSON.stringify(servers, null, 2);
+					fs.writeFile('servers.json', data, (err) => {  
+						if (err) throw err;
+						console.log('server edited in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
+					});
+					return;
+				}
+				default:{
+					message.channel.send("please enter a valid server name and/or attribute")
+					return;
+				}
+			}
+		}
+		default:{
+			server = servers.guilds.get(message.guild.id).mcservers.find(server => server.commands.includes(command));
+			if (typeof server !== 'undefined') {
+				ping(server, (err, embed) => {
+					if (err) {console.log(err);message.channel.send(err);}
+					message.channel.send(embed)
+				})
 				return;
 			}
 		}
-		message.channel.send("please enter a valid server name")
-		return;
 	}
-	
-	if (command === "listservers") {
-		var servernamelist = []
-		for (var i = 0; i < servers.guilds.get(message.guild.id).mcservers.length; i++) {
-		servernamelist.push(servers.guilds.get(message.guild.id).mcservers[i].name)
-		}
-
-		const embed = new Discord.RichEmbed()
-		.setTitle("Servers:")
-		.setColor("FFFFFF")
-		.setDescription((servernamelist.length != 0?"```" + servernamelist.join("\n") + "```":"no servers found, use `" + servers.guilds.get(message.guild.id).prefix + "addserver` to change that")+"\nuse " + servers.guilds.get(message.guild.id).prefix + "serverproperties <name> to get more info about a server");
-		message.channel.send(embed);
-		return;
-		
-	}
-	
-	if (command === "editserver") {
-		if (servers.guilds.get(message.guild.id).role.id !== null && !(message.member.roles.has(servers.guilds.get(message.guild.id).role.id))) {message.channel.send("Only people with " + servers.guilds.get(message.guild.id).role.name + " can use this command"); return;}
-		
-		if (args.length < 3) {
-			message.channel.send("Usage: " + servers.guilds.get(message.guild.id).prefix + "editserver <server> [name, ip, port, command(s)] <value1> <value2>");
-			return;
-		}
-		
-		serverindex = servers.guilds.get(message.guild.id).mcservers.findIndex(server => server.name === args[0]);
-		
-		if (args[1] === "name") {
-			if (args.length > 3) {
-			message.channel.send("attribute `name` can only have one value");
-			return;
-			}
-			
-			servers.guilds.get(message.guild.id).mcservers[serverindex].name = args[2];
-			
-			message.channel.send("server `" + args[0] + "` was renamed to `" + args[2] + "`");
-			
-			let data = JSON.stringify(servers, null, 2);
-			fs.writeFile('servers.json', data, (err) => {  
-				if (err) throw err;
-				console.log('server edited in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
-			});
-			return;
-		}
-		
-		if (args[1] === "ip") {
-			if (args.length > 3) {
-			message.channel.send("attribute `ip` can only have one value");
-			return;
-			}
-			
-			servers.guilds.get(message.guild.id).mcservers[serverindex].address.ip = args[2];
-			
-			message.channel.send("server attribute `" + args[1] + "` was changed to `" + args[2] + "`");
-			
-			let data = JSON.stringify(servers, null, 2);
-			fs.writeFile('servers.json', data, (err) => {  
-				if (err) throw err;
-				console.log('server edited in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
-			});
-			return;
-		}
-		
-		if (args[1] === "port") {
-			if (args.length > 3) {
-			message.channel.send("attribute `name` can only have one value");
-			return;
-			}
-			
-			servers.guilds.get(message.guild.id).mcservers[serverindex].address.port = args[2];
-			
-			message.channel.send("server attribute `" + args[1] + "` was changed to `" + args[2] + "`");
-			
-			let data = JSON.stringify(servers, null, 2);
-			fs.writeFile('servers.json', data, (err) => {  
-				if (err) throw err;
-				console.log('server edited in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
-			});
-			return;
-		}
-		
-		if (args[1] === "command(s)") {
-			var cmds = args.splice(2,args.length - 2);
-			
-			servers.guilds.get(message.guild.id).mcservers[serverindex].commands = cmds
-			
-			message.channel.send("server attribute `" + args[1] + "` was changed to `" + servers.guilds.get(message.guild.id).prefix + "" + cmds.join(" " + servers.guilds.get(message.guild.id).prefix + "") + "`");
-			let data = JSON.stringify(servers, null, 2);
-			fs.writeFile('servers.json', data, (err) => {  
-				if (err) throw err;
-				console.log('server edited in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
-			});
-			return;
-		}
-		
-		message.channel.send("please enter a valid server name and/or attribute")
-		return;
-	}
-	
-	server = servers.guilds.get(message.guild.id).mcservers.find(server => server.commands.includes(command));
-	if (typeof server !== 'undefined') {
-		ping(server, (err, embed) => {
-			if (err) {console.log(err);message.channel.send(err);}
-			message.channel.send(embed)
-		})
-	};
 	
 });
