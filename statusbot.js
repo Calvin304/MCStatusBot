@@ -2,14 +2,13 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const config = require("./config.json");
 client.login(config.token);
-const spawn = require("child_process").spawn;
 const fs = require('fs');
-var FastMap = require("collections/fast-map.js");
+const FastMap = require("collections/fast-map.js");
 const ping = require("./ping.js");
 
 
 let rawdata = fs.readFileSync('servers.json');  
-let servers = JSON.parse(rawdata);
+servers = JSON.parse(rawdata);
 servers.guilds = new FastMap(servers.guilds)
 
 function clean(text) {
@@ -85,7 +84,7 @@ client.on('message', message => {
 		if (message.author.id !== config.author.id) {message.channel.send("Only " + config.author.name + " can use this command"); return;}
 		
 		let rawdata = fs.readFileSync('servers.json');  
-		let servers = JSON.parse(rawdata);
+		servers = JSON.parse(rawdata);
 		servers.guilds = new FastMap(servers.guilds)
 		console.log('json reloaded');
 		message.channel.send("JSON reloaded");
@@ -139,10 +138,6 @@ client.on('message', message => {
 				console.log('Prefix Changed to "' + servers.guilds.get(message.guild.id).prefix + '" for ' + message.guild.name + ' (id: ' + message.guild.id + ')');
 			});
 		}
-		
-		case "removeserver": {
-			message.channel.send("Did you mean `" + servers.guilds.get(message.guild.id).prefix + "deleteserver`");
-		}
 
 		case "addserver": {
 			if (servers.guilds.get(message.guild.id).role.id !== null && !(message.member.roles.has(servers.guilds.get(message.guild.id).role.id))) {message.channel.send("Only people with " + servers.guilds.get(message.guild.id).role.name + " can use this command"); return;}
@@ -150,8 +145,8 @@ client.on('message', message => {
 				message.channel.send("Usage: " + servers.guilds.get(message.guild.id).prefix + "addserver <name> <ip/url> <port (write 25565 if no port)> <command1> <command2> ...");
 				return;
 			}
-			var cmds = args.splice(3,args.length - 3);
-			var newserver = {"name": args[0],"commands": cmds,"address": {"ip": args[1],"port": args[2]},}
+			let cmds = args.splice(3,args.length - 3);
+			let newserver = {"name": args[0],"commands": cmds,"address": {"ip": args[1],"port": args[2]},}
 			servers.guilds.get(message.guild.id).mcservers.push(newserver)
 			
 			let data = JSON.stringify(servers, null, 2);
@@ -162,7 +157,11 @@ client.on('message', message => {
 			message.channel.send("Server added with name of "+ newserver.name)
 			return;
 		}
-		
+
+		case "removeserver": {
+			message.channel.send("Did you mean `" + servers.guilds.get(message.guild.id).prefix + "deleteserver`");
+		}
+
 		case "deleteserver": {
 			if (servers.guilds.get(message.guild.id).role.id !== null && !(message.member.roles.has(servers.guilds.get(message.guild.id).role.id))) {message.channel.send("Only people with " + servers.guilds.get(message.guild.id).role.name + " can use this command"); return;}
 			if (args.length < 1) {
@@ -170,7 +169,7 @@ client.on('message', message => {
 				return;
 			}
 			if (servers.guilds.get(message.guild.id).mcservers.findIndex(server => server.name === args[0]) === -1) {
-				message.channel.send(args[0] + "is not a valid server")
+				message.channel.send("`" + args[0] + "` is not a valid server")
 				return;
 			};
 
@@ -182,7 +181,7 @@ client.on('message', message => {
 				console.log("Deleted Server " + args[0] + ' in ' + message.guild.name + ' (id: ' + message.guild.id + ')');
 			});
 			
-			message.channel.send("Deleted Server " + args[0])
+			message.channel.send("Deleted Server `" + args[0] + "`")
 			return;
 		}
 		
@@ -192,9 +191,9 @@ client.on('message', message => {
 				return;
 			}
 			
-			var name = args.join(" ");
+			let name = args[0];
 			
-			for (var i = 0; i < servers.guilds.get(message.guild.id).mcservers.length; i++) {
+			for (let i = 0; i < servers.guilds.get(message.guild.id).mcservers.length; i++) {
 				if (servers.guilds.get(message.guild.id).mcservers[i].name === name) {
 					message.channel.send("Server: `" + servers.guilds.get(message.guild.id).mcservers[i].name + "`\nIp/Url: `" + servers.guilds.get(message.guild.id).mcservers[i].address.ip + "`\nPort: `" + servers.guilds.get(message.guild.id).mcservers[i].address.port + "`\nCommand(s): `" + servers.guilds.get(message.guild.id).prefix + servers.guilds.get(message.guild.id).mcservers[i].commands.join(" " + servers.guilds.get(message.guild.id).prefix + "") + "`")
 					return;
@@ -205,15 +204,15 @@ client.on('message', message => {
 		}
 		
 		case "listservers": {
-			var servernamelist = []
-			for (var i = 0; i < servers.guilds.get(message.guild.id).mcservers.length; i++) {
+			let servernamelist = []
+			for (let i = 0; i < servers.guilds.get(message.guild.id).mcservers.length; i++) {
 			servernamelist.push(servers.guilds.get(message.guild.id).mcservers[i].name)
 			}
 
 			const embed = new Discord.RichEmbed()
 			.setTitle("Servers:")
 			.setColor("FFFFFF")
-			.setDescription((servernamelist.length != 0?"```" + servernamelist.join("\n") + "```":"no servers found, use `" + servers.guilds.get(message.guild.id).prefix + "addserver` to change that")+"\nuse " + servers.guilds.get(message.guild.id).prefix + "serverproperties <name> to get more info about a server");
+			.setDescription((servernamelist.length?"```" + servernamelist.join("\n") + "```":"no servers found, use `" + servers.guilds.get(message.guild.id).prefix + "addserver` to change that")+"\nuse " + servers.guilds.get(message.guild.id).prefix + "serverproperties <name> to get more info about a server");
 			message.channel.send(embed);
 			return;
 			
@@ -286,7 +285,7 @@ client.on('message', message => {
 				case "command":
 				case "commands":
 				case "command(s)": {
-					var cmds = args.splice(2,args.length - 2);
+					let cmds = args.splice(2,args.length - 2);
 					
 					servers.guilds.get(message.guild.id).mcservers[serverindex].commands = cmds
 					
@@ -305,7 +304,7 @@ client.on('message', message => {
 			}
 		}
 		default:{
-			server = servers.guilds.get(message.guild.id).mcservers.find(server => server.commands.includes(command));
+			let server = servers.guilds.get(message.guild.id).mcservers.find(server => server.commands.includes(command));
 			if (typeof server !== 'undefined') {
 				ping(server, (err, embed) => {
 					if (err) {console.log(err);message.channel.send(err);}
