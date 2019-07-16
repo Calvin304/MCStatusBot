@@ -65,13 +65,20 @@ client.on('message', message => {
 		try {
 			let evaled = eval(code);
 			if (typeof evaled !== "string") evaled = require("util").inspect(evaled);
-			message.channel.send("🆗 Evaluated successfully.\n\`\`\`js\n" + evaled + "\`\`\`");
-			console.log("/eval was successful, returned ->" + evaled);
-			} catch (e) {
-			message.channel.send("🆘 Failed to evaluate JavaScript-code.\n\`\`\`fix\n" + clean(e) + "\`\`\`");
-			console.log("/eval was unsuccessful, returned ->" + clean(e));
+			message.channel.send("🆗 Evaluated successfully. (response length = " + evaled.length + ")");
+			for (let i = 0; i < Math.ceil(evaled.length / 1975); i++) {
+				message.channel.send("`\`\`js\n" + evaled.slice((1975 * i),((1974 + 1975 * i) < evaled.length)?(1974 + 1975 * i):(evaled.length)) + "\`\`\`");
 			}
-			return;
+			console.log("/eval was successful, returned ->" + evaled);
+		} catch (e) {
+			let evaled = clean(e);
+			message.channel.send("🆘 Failed to evaluate JavaScript-code. (response length = " + evaled.length + ")");
+			for (let i = 0; i < Math.ceil(evaled.length / 1975); i++) {
+				message.channel.send("`\`\`js\n" + evaled.slice((1975 * i),((1974 + 1975 * i) < evaled.length)?(1974 + 1975 * i):(evaled.length)) + "\`\`\`");
+			}
+			console.log("/eval was unsuccessful, returned ->" + evaled);
+			}
+		return;
 	}
 
 	if (message.content === "/reloadjson") {
