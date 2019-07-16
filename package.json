@@ -24,4 +24,5 @@
     "url": "https://github.com/Calvin304/MCStatusBot/issues"
   },
   "homepage": "https://github.com/Calvin304/MCStatusBot#readme"
+  "private": true
 }
