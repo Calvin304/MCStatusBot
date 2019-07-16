@@ -283,6 +283,8 @@ client.on('message', message => {
 					return;
 				}
 				
+				case "command":
+				case "commands":
 				case "command(s)": {
 					var cmds = args.splice(2,args.length - 2);
 					
