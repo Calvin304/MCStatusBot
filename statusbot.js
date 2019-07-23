@@ -34,7 +34,7 @@ client.on("guildCreate", guild => {
 
 client.on("guildUpdate", (oldGuild, newGuild) => {
 	if (oldGuild.name !== newGuild.name) {
-		console.log('guild ' + oldGuild.name + "changed to " + newGuild.name);
+		console.log('guild ' + oldGuild.name + " changed to " + newGuild.name);
 		servers.guilds.get(oldGuild.id).name = newGuild.name;
 		let data = JSON.stringify(servers, null, 2);
 		fs.writeFile('servers.json', data, (err) => {  
@@ -66,14 +66,14 @@ client.on('message', message => {
 			if (typeof evaled !== "string") evaled = require("util").inspect(evaled);
 			message.channel.send("🆗 Evaluated successfully. (response length = " + evaled.length + ")");
 			for (let i = 0; i < Math.ceil(evaled.length / 1975); i++) {
-				message.channel.send("`\`\`js\n" + evaled.slice((1975 * i),((1974 + 1975 * i) < evaled.length)?(1974 + 1975 * i):(evaled.length)) + "\`\`\`");
+				message.channel.send("`\`\`js\n" + evaled.slice((1975 * i),((1975 + 1975 * i) < evaled.length)?(1975 + 1975 * i):(evaled.length)) + "\`\`\`");
 			}
 			console.log("/eval was successful, returned ->" + evaled);
 		} catch (e) {
 			let evaled = clean(e);
 			message.channel.send("🆘 Failed to evaluate JavaScript-code. (response length = " + evaled.length + ")");
 			for (let i = 0; i < Math.ceil(evaled.length / 1975); i++) {
-				message.channel.send("`\`\`js\n" + evaled.slice((1975 * i),((1974 + 1975 * i) < evaled.length)?(1974 + 1975 * i):(evaled.length)) + "\`\`\`");
+				message.channel.send("`\`\`js\n" + evaled.slice((1975 * i),((1975 + 1975 * i) < evaled.length)?(1975 + 1975 * i):(evaled.length)) + "\`\`\`");
 			}
 			console.log("/eval was unsuccessful, returned ->" + evaled);
 			}
