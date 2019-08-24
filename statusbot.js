@@ -266,7 +266,7 @@ client.on('message', message => {
 				
 				case "port": {
 					if (args.length > 3) {
-					message.channel.send("attribute `name` can only have one value");
+					message.channel.send("attribute `port` can only have one value");
 					return;
 					}
 					
@@ -301,6 +301,17 @@ client.on('message', message => {
 					message.channel.send("please enter a valid server name and/or attribute")
 					return;
 				}
+			}
+		}
+		case "ping":{
+			if (args.length != 2) {message.channel.send("Usage: " + servers.guilds.get(message.guild.id).prefix + "ping <ip/url> <port (write 25565 if no port)>");return;}
+			let server = {"name":args.join(":"),"address":{"ip":args[0],"port":args[1]}};
+			if (typeof server !== 'undefined') {
+				ping(server, (err, embed) => {
+					if (err) {console.log(err);message.channel.send(err);}
+					message.channel.send(embed)
+				})
+				return;
 			}
 		}
 		default:{
