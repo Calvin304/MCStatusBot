@@ -19,7 +19,8 @@ module.exports = function (server, callback) {
             .attachFile({attachment:Buffer.from(pingResults.favicon.replace(/^data:image\/png;base64,/, ''), 'base64'),name:"image.png"})
             .setThumbnail("attachment://image.png")
             .setDescription( (pingResults.description.text == "")?"":"`" + pingResults.description.text + "`")
-            .addField("There " + ((pingResults.players.online === 1)?"is **":"are **") + pingResults.players.online + "/" + pingResults.players.max +"** players online", ((pingResults.players.sample == undefined)?"n/a":"`" + pingResults.players.sample.map(player => player.name).join(", ") + "`"))
+            .addField("There " + ((pingResults.players.online === 1)?"is **":"are **") + pingResults.players.online + "/" + pingResults.players.max +"** players online", ((pingResults.players.sample == undefined)?"n/a":"`" + pingResults.players.sample.map(player => player.name).join(", ") + "`"), false)
+            .addField("Version", "`" + pingResults.version.name + "`", true)
             ;callback(null, message);
             return;
         };
@@ -27,7 +28,8 @@ module.exports = function (server, callback) {
         .setTitle('Status of ' + server.name)
         .setColor("00FF00")
         .setDescription( (pingResults.description.text == "")?"":"`" + pingResults.description.text + "`")
-        .addField("There " + ((pingResults.players.online === 1)?"is **":"are **") + pingResults.players.online + "/" + pingResults.players.max +"** players online", ((pingResults.players.sample == undefined)?"n/a":"`" + pingResults.players.sample.map(player => player.name).join(", ") + "`"))
+        .addField("There " + ((pingResults.players.online === 1)?"is **":"are **") + pingResults.players.online + "/" + pingResults.players.max +"** players online", ((pingResults.players.sample == undefined)?"n/a":"`" + pingResults.players.sample.map(player => player.name).join(", ") + "`"), false)
+        .addField("Version", "`" + pingResults.version.name + "`", true)
         ;callback(null, message);
         return;
     })
