@@ -137,6 +137,7 @@ client.on('message', message => {
 				if (err) throw err;
 				console.log('Prefix Changed to "' + servers.guilds.get(message.guild.id).prefix + '" for ' + message.guild.name + ' (id: ' + message.guild.id + ')');
 			});
+			return;
 		}
 
 		case "addserver": {
@@ -202,7 +203,8 @@ client.on('message', message => {
 			message.channel.send("please enter a valid server name")
 			return;
 		}
-		
+		case "servers":
+		case "serverlist":
 		case "listservers": {
 			let servernamelist = []
 			for (let i = 0; i < servers.guilds.get(message.guild.id).mcservers.length; i++) {
