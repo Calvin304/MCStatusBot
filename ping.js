@@ -2,7 +2,7 @@ const mc = require('minecraft-protocol');
 const Discord = require('discord.js');
 
 module.exports = function (server, callback) {
-    mc.ping({"host":server.address.ip,"port":int(server.address.port)},(err, pingResults) => {
+    mc.ping({"host":server.address.ip,"port":parseInt(server.address.port)},(err, pingResults) => {
         if (err) {
             const message = new Discord.RichEmbed()
             .setTitle('Status of ' + server.name)
