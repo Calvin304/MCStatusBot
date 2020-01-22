@@ -6,13 +6,16 @@
   "dependencies": {
     "collections": "^5.1.9",
     "discord.js": "^11.5.1",
-    "minecraft-protocol": "^1.9.3"
+    "discord.js-commando": "^0.10.0",
+    "is-ip": "^3.1.0",
+    "minecraft-protocol": "^1.9.3",
+    "sqlite": "^3.0.3",
+    "valid-url": "^1.0.9"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ."
-
   },
   "repository": {
     "type": "git",
