@@ -30,7 +30,7 @@ module.exports = class deleteserver extends commando.Command {
     }
 
     hasPermission(msg) {
-        return msg.member.hasPermission("MANAGE_GUILD")
+        return msg.member.hasPermission("MANAGE_GUILD") || msg.client.owners.some(owner => owner.id === msg.member.id)
     }
 
     async run(msg, args) {

@@ -53,9 +53,9 @@ module.exports = class status extends commando.Command {
 
     hasPermission(msg) {
         let roleid = msg.guild.settings.get("role")
-        return msg.member.hasPermission("MANAGE_GUILD") || msg.member.roles.has(roleid)
+        return msg.member.hasPermission("MANAGE_GUILD") || msg.member.roles.has(roleid) || msg.client.owners.some(owner => owner.id === msg.member.id)
     }
-    
+
     async run(msg, args) {
         let server = {"name":args.name,"url":args.url.url,"alias":args.alias};
         let servers = JSON.parse(msg.guild.settings.get("servers") || "[]");

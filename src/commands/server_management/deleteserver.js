@@ -33,7 +33,7 @@ module.exports = class deleteserver extends commando.Command {
 
     hasPermission(msg) {
         let roleid = msg.guild.settings.get("role")
-        return msg.member.hasPermission("MANAGE_GUILD") || msg.member.roles.has(roleid)
+        return msg.member.hasPermission("MANAGE_GUILD") || msg.member.roles.has(roleid)  || msg.client.owners.some(owner => owner.id === msg.member.id)
     }
 
     async run(msg, args) {
