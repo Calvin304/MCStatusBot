@@ -31,6 +31,11 @@ module.exports = class deleteserver extends commando.Command {
         });
     }
 
+    hasPermission(msg) {
+        let roleid = msg.guild.settings.get("role")
+        return msg.member.hasPermission("MANAGE_GUILD") || msg.member.roles.has(roleid)
+    }
+
     async run(msg, args) {
         let servers = JSON.parse(msg.guild.settings.get("servers") || "[]");
         servers.splice(servers.findIndex(value => value = args.server),1)

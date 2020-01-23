@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 
 module.exports = server => new Promise(resolve => {
     let url = new URL(server.url)
-    mc.ping({host: url.hostname, port: url.port || 25565, checkTimeoutInterval: 10*1000},(err, pingResults) => {
+    mc.ping({host: url.hostname, port: url.port || 25565},(err, pingResults) => {
         if (err) {
             const message = new Discord.RichEmbed()
             .setTitle('Status of ' + server.name)
