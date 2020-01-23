@@ -1,6 +1,6 @@
 const path = require('path');
 const { ShardingManager } = require('discord.js');
-const { token } = require('./config.json');
+const { token } = require('../config.json');
 
 const manager = new ShardingManager(path.join(__dirname, 'bot.js'), {
 	token,
