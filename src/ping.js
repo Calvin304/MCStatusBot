@@ -5,7 +5,7 @@ module.exports = server => new Promise(resolve => {
     let url = new URL(server.url)
     mc.ping({host: url.hostname, port: url.port || 25565},(err, pingResults) => {
         if (err) {
-            const message = new Discord.RichEmbed()
+            let message = new Discord.RichEmbed()
             .setTitle('Status of ' + server.name)
             .setColor("FF0000")
             .setDescription(err);
@@ -13,7 +13,7 @@ module.exports = server => new Promise(resolve => {
             return;
         };
 
-        const message = new Discord.RichEmbed()
+        let message = new Discord.RichEmbed()
         .setTitle('Status of ' + server.name)
         .setColor("00FF00")
         .setDescription((pingResults.description.text == "")?"":"`" + pingResults.description.text + "`")

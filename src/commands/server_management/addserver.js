@@ -61,7 +61,7 @@ module.exports = class status extends commando.Command {
         let servers = JSON.parse(msg.guild.settings.get("servers") || "[]");
         servers.push(server);
         msg.guild.settings.set("servers",JSON.stringify(servers));
-        return msg.channel.send("server created: " + JSON.stringify(servers));
+        return msg.channel.send("server created: " + server.name);
     }
 
 

@@ -1,6 +1,5 @@
 const commando = require('discord.js-commando');
 const dns = require('dns').promises;
-const isIp = require('is-ip');
 
 module.exports = class serverurl extends commando.ArgumentType {
 	constructor(client) {
@@ -8,14 +7,14 @@ module.exports = class serverurl extends commando.ArgumentType {
 	}
 
 	async validate(val) {
-        let url = new URL("minecraft://" + val)
-        if(isIp(url.hostname)) {return true}; //TODO: dont use is-ip
-        let address = await dns.resolve4(url.hostname).catch(err => {}) || await dns.resolveSrv("_minecraft._tcp." + url.hostname).catch(err => {}) || await dns.resolveCname(url.hostname).catch(err => {}) || await dns.resolve6(url.hostname).catch(err => {})
-        if (address) {return true}
-        return "invalid hostname";
-    }
+                let url = new URL("minecraft://" + val)
+                if(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/.test(url.hostname)) {return true};
+                let address = await dns.resolve4(url.hostname).catch(err => {}) || await dns.resolveSrv("_minecraft._tcp." + url.hostname).catch(err => {}) || await dns.resolveCname(url.hostname).catch(err => {}) || await dns.resolve6(url.hostname).catch(err => {})
+                if (address) {return true}
+                return "invalid hostname";
+        }
 
 	parse(val) {
-        return {"name":val,"url":new URL('minecraft://'+val).href}
+                return {"name":val,"url":new URL('minecraft://'+val).href}
 	}
 }

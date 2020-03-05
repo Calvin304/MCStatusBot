@@ -38,9 +38,9 @@ module.exports = class deleteserver extends commando.Command {
 
     async run(msg, args) {
         let servers = JSON.parse(msg.guild.settings.get("servers") || "[]");
-        servers.splice(servers.findIndex(value => value = args.server),1)
-        msg.guild.settings.set("servers",JSON.stringify(servers));
-        return msg.channel.send("deleted server: " + JSON.stringify(args.server));
+        servers.splice(servers.findIndex(value => value === args.server),1)
+        msg.guild.settings.set("servers", JSON.stringify(servers));
+        return msg.channel.send("deleted server: " + JSON.stringify(args.server.name));
     }
 
 
