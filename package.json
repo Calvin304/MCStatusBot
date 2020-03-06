@@ -4,13 +4,13 @@
   "description": "Discord Bot to Check Status' of Minecraft Servers",
   "main": "statusbot.js",
   "dependencies": {
+    "@keyv/sqlite": "^2.0.2",
     "collections": "^5.1.9",
+    "commando-provider-keyv": "^2.0.1",
     "discord.js": "^11.5.1",
     "discord.js-commando": "^0.10.0",
-    "is-ip": "^3.1.0",
-    "minecraft-protocol": "^1.9.3",
-    "sqlite": "^3.0.3",
-    "valid-url": "^1.0.9"
+    "keyv": "^4.0.0",
+    "minecraft-protocol": "^1.9.3"
   },
   "devDependencies": {},
   "scripts": {

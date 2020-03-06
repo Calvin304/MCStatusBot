@@ -31,8 +31,8 @@ module.exports = class deleteserver extends commando.Command {
         });
     }
 
-    hasPermission(msg) {
-        let roleid = msg.guild.settings.get("role")
+    async hasPermission(msg) {
+        let roleid = await msg.guild.settings.get("role")
         return msg.member.hasPermission("MANAGE_GUILD") || msg.member.roles.has(roleid)  || msg.client.owners.some(owner => owner.id === msg.member.id)
     }
 

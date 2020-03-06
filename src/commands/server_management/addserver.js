@@ -24,8 +24,8 @@ module.exports = class status extends commando.Command {
 					key: 'name',
 					prompt: 'name',
                     type: 'string',
-                    validate(val, msg) {
-                        let servers = JSON.parse(msg.guild.settings.get("servers") || "[]");
+                    async validate(val, msg) {
+                        let servers = JSON.parse(await msg.guild.settings.get("servers", "[]"));
                         if (servers.some(server => server.name === val || server.alias.includes(val))) return "name in use"
                         return true
                     }
@@ -41,8 +41,8 @@ module.exports = class status extends commando.Command {
                     type: "string",
                     default: '',
                     infinite: true,
-                    validate(val, msg) {
-                        let servers = JSON.parse(msg.guild.settings.get("servers") || "[]");
+                    async validate(val, msg) {
+                        let servers = JSON.parse(await msg.guild.settings.get("servers", "[]"));
                         if (servers.some(server => server.name === val || server.alias.includes(val))) return "alias in use"
                         return true
                     }
@@ -51,14 +51,14 @@ module.exports = class status extends commando.Command {
         });
     }
 
-    hasPermission(msg) {
-        let roleid = msg.guild.settings.get("role")
+    async hasPermission(msg) {
+        let roleid = await msg.guild.settings.get("role")
         return msg.member.hasPermission("MANAGE_GUILD") || msg.member.roles.has(roleid) || msg.client.owners.some(owner => owner.id === msg.member.id)
     }
 
     async run(msg, args) {
         let server = {"name":args.name,"url":args.url.url,"alias":args.alias};
-        let servers = JSON.parse(msg.guild.settings.get("servers") || "[]");
+        let servers = JSON.parse(await msg.guild.settings.get("servers", "[]"));
         servers.push(server);
         msg.guild.settings.set("servers",JSON.stringify(servers));
         return msg.channel.send("server created: " + server.name);

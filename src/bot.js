@@ -1,7 +1,8 @@
 const commando = require('discord.js-commando');
 const path = require('path');
 const oneLine = require('common-tags').oneLine;
-const sqlite = require('sqlite');
+const Keyv = require('keyv');
+const KeyvProvider = require('commando-provider-keyv');
 const config = require('../config.json');
 
 const client = new commando.Client({
@@ -49,9 +50,7 @@ client
 		`);
 	});
 
-client.setProvider(
-	sqlite.open(path.join(__dirname, 'database.sqlite3')).then(db => new commando.SQLiteProvider(db))
-).catch(console.error);
+	client.setProvider(new KeyvProvider(new Keyv(config.db))).catch(console.error);
 
 client.registry
     .registerGroups([

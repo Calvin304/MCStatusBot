@@ -5,16 +5,16 @@ module.exports = class server extends commando.ArgumentType {
 		super(client, 'server');
     }
 
-    validate(val, msg) {
+    async validate(val, msg) {
         if (msg.channel.type === "dm" || msg.channel.type === "group") return "must be used in a guild"
-        let servers = JSON.parse(msg.guild.settings.get("servers") || "[]")
+        let servers = JSON.parse(await msg.guild.settings.get("servers", "[]"));
         let server = servers.find(server => server.name === val || server.alias.includes(val))
         if (server == undefined) {return "server doesnt exist";};
         return !!server.name && !!server.url
     }
     
-    parse(val, msg) {
-        let servers = JSON.parse(msg.guild.settings.get("servers") || "[]")
+    async parse(val, msg) {
+        let servers = JSON.parse(await msg.guild.settings.get("servers", "[]"));
         return servers.find(server => server.name === val || server.alias.includes(val))
     }
 }

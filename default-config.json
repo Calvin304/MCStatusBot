@@ -4,5 +4,6 @@
     "author": {
         "name":"Calvin304",
         "id": "329404086959079425"
-    }
+    },
+    "db":"sqlite://../database.sqlite3"
 }

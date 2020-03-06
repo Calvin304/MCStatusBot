@@ -22,7 +22,7 @@ module.exports = class listservers extends commando.Command {
     }
 
     async run(msg) {
-        let servers = JSON.parse(msg.guild.settings.get("servers") || "[]");
+        let servers = JSON.parse(await msg.guild.settings.get("servers", "[]"));
         let embed = new Discord.RichEmbed()
         .setTitle("Servers in " + msg.guild.name)
         servers.forEach(server => {
