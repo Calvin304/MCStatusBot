@@ -1,0 +1,8 @@
+{
+    "token": "YOUR-TOKEN-HERE",
+    "commandPrefix":"/",
+    "author": {
+        "name":"Calvin304",
+        "id": "329404086959079425"
+    }
+}
