@@ -7,14 +7,14 @@ module.exports = class deleteserver extends commando.Command {
             group: 'server_management',
             memberName: 'deleteserver',
             description: 'Gets Status of a Minecraft Server',
-            format: "deleteserver <name>",
+            format: "<name>",
             aliases: [
                 "removeserver",
                 "delete",
                 "remove"
             ],
             examples: [
-                "deleteserver testing",
+                "deleteserver hypixel",
             ],
             throttling: {
                 usages: 1,

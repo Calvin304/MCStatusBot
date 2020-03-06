@@ -8,13 +8,13 @@ module.exports = class status extends commando.Command {
             group: 'main',
             memberName: 'status',
             description: 'Gets Status of a Minecraft Server',
-            format: "status <name|alias|url>",
+            format: "<name|alias|url>",
             aliases: [
                 "s"
             ],
             examples: [
-                "status testing.mc.tbc-official.com",
-                "status [name or alias of server added with addserver]",
+                "status mc.hypixel.net",
+                "status hy",
             ],
             throttling: {
                 usages: 4,

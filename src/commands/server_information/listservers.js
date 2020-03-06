@@ -8,13 +8,10 @@ module.exports = class listservers extends commando.Command {
             group: 'server_information',
             memberName: 'listservers',
             description: 'Lists Servers Defined by addserver',
-            format: "listservers",
+            format: "",
             aliases: [
                 "servers",
                 "listserver"
-            ],
-            examples: [
-                "listservers",
             ],
             throttling: {
                 usages: 1,

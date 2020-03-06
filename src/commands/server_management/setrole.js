@@ -7,12 +7,13 @@ module.exports = class deleteserver extends commando.Command {
             group: 'server_management',
             memberName: 'role',
             description: 'allows role to use server management commands',
-            format: "setrole <role resolvable>",
+            format: "<role resolvable>",
             aliases: [
                 "role"
             ],
             examples: [
-                "role testing",
+                "role MOD",
+                "role 222089067028807682" //roleid of mod in djs discord :)
             ],
             throttling: {
                 usages: 1,

@@ -10,7 +10,7 @@ module.exports = class status extends commando.Command {
             aliases: [
                 "add"
             ],
-            format: "addserver <name> <url:port> [aliases]",
+            format: "<name> <url:port> [aliases]",
             examples: [
                 "addserver hypixel mc.hypixel.net hy",
             ],
