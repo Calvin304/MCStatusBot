@@ -50,7 +50,7 @@ client
 		`);
 	});
 
-	client.setProvider(new KeyvProvider(new Keyv(config.db))).catch(console.error);
+client.setProvider(new KeyvProvider(new Keyv(config.db))).catch(console.error);
 
 client.registry
     .registerGroups([
